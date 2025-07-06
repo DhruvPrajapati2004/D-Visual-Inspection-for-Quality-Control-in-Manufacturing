@@ -5,6 +5,18 @@ A real-time, web-based application for detecting surface defects in industrial m
 
 ---
 
+## 🚀 Features
+
+- 🧾 **Batch & Single Image Processing**
+- 📸 **Webcam Capture Support**
+- 🎨 **Real-time Visualization** (Contours + Probability Heatmaps)
+- 📉 **Class-wise Thresholding**
+- 📊 **Defect Distribution Graphs (Plotly)**
+- 📥 **ZIP/CSV Report Downloads**
+- ⚡ **GPU/CPU compatible PyTorch backend**
+
+---
+
 ## 📌 Project Highlights
 
 - ✅ **Model**: U-Net (ResNet34 encoder) trained on annotated industrial surface defect dataset.
@@ -21,18 +33,6 @@ A real-time, web-based application for detecting surface defects in industrial m
 - 🖥️ **Interface**: Upload ZIP/images or use live webcam for instant detection.
 - 📊 **Outputs**: Contour overlays, raw probability heatmaps, CSV summaries, ZIP report downloads.
 - ⚙️ **Fully configurable**: Threshold sliders, class selection, visualization mode toggle.
-
----
-
-## 🚀 Features
-
-- 🧾 **Batch & Single Image Processing**
-- 📸 **Webcam Capture Support**
-- 🎨 **Real-time Visualization** (Contours + Probability Heatmaps)
-- 📉 **Class-wise Thresholding**
-- 📊 **Defect Distribution Graphs (Plotly)**
-- 📥 **ZIP/CSV Report Downloads**
-- ⚡ **GPU/CPU compatible PyTorch backend**
 
 ---
 
@@ -83,7 +83,7 @@ streamlit run app.py
 
 ## 🔧 Setup Notes
 
-- Make sure `unet_qc_trained.pth` is in the root directory.
+- Make sure `.pth` is in the root directory.
 - Supports both CPU and GPU (automatically detected).
 - Default model input size: **128x800** (resize automatically applied).
 
@@ -103,11 +103,3 @@ streamlit run app.py
 MIT License
 
 ---
-
-## ✨ Acknowledgements
-
-- **Intel AI for Manufacturing Certificate Program** – Project guided by GTU + Intel India
-- Based on best practices from real-world industrial visual inspection systems
-
----
-

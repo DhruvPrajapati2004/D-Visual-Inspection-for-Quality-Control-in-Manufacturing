@@ -57,7 +57,6 @@ visual_inspection-AI4MFG/
 │   ├── dataset.md
 │   └── train.csv
 ├── src/
-│   └── training/
 │       ├── __init__.py
 │       ├── data_preparation.py
 │       ├── model_utils.py

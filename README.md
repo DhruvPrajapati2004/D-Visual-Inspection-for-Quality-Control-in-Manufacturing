@@ -54,10 +54,7 @@ A real-time, web-based application for detecting surface defects in industrial m
 ```
 visual_inspection-AI4MFG/
 ├── data/
-│   ├── train_images/
-│   │   ├── image1.jpg
-│   │   ├── image2.jpg
-│   │   └── ...
+│   ├── dataset.md
 │   └── train.csv
 ├── src/
 │   └── training/

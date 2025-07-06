@@ -52,17 +52,11 @@ A real-time, web-based application for detecting surface defects in industrial m
 ## 📂 Project Structure
 
 ```
-visual_inspection-AI4MFG/
+D-Visual-Inspection-for-Quality-Control-in-Manufacturing/
 ├── data/
 │   ├── dataset.md
 │   └── train.csv
-├── src/
-│       ├── __init__.py
-│       ├── data_preparation.py
-│       ├── model_utils.py
-│       ├── trainer.py
-│       ├── visualize.py
-│       └── train.py
+├── main.ipynb
 ├── app.py
 ├── config.py
 ├── model.py

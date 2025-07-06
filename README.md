@@ -52,16 +52,35 @@ A real-time, web-based application for detecting surface defects in industrial m
 ## 📂 Project Structure
 
 ```
-project/
-│
-├── app.py                # Streamlit main app
-├── config.py             # Central configuration settings
-├── model.py              # U-Net loading and inference logic
-├── transforms.py         # Albumentations-based preprocessing
-├── utils.py              # Contours, overlays, heatmaps, and helpers
-├── unet_qc_trained.pth   # Trained model weights
-├── requirements.txt      # Python dependencies
-└── README.md             # You're here!
+visual_inspection-AI4MFG/
+├── data/
+│   ├── train_images/
+│   │   ├── image1.jpg
+│   │   ├── image2.jpg
+│   │   └── ...
+│   └── train.csv
+├── src/
+│   └── training/
+│       ├── __init__.py
+│       ├── data_preparation.py
+│       ├── model_utils.py
+│       ├── trainer.py
+│       ├── visualize.py
+│       └── train.py
+├── app.py
+├── config.py
+├── model.py
+├── transforms.py
+├── utils.py
+├── requirements.txt
+├── models/
+│   └── uploaded_model_unet_qc_trained.pth
+├── pages/
+│   ├── 1_Batch_Single_Detection.py
+│   ├── 3_PDF_Report_Generation.py
+│   └── 4_Model_Management.py
+├── README.md
+└── .gitignore
 ```
 
 ---

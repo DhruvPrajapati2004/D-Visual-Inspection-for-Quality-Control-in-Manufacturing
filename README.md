@@ -53,6 +53,8 @@ A real-time, web-based application for detecting surface defects in industrial m
 
 ```
 D-Visual-Inspection-for-Quality-Control-in-Manufacturing/
+├── .stramlit/
+│   └── config.toml
 ├── data/
 │   ├── dataset.md
 │   └── train.csv

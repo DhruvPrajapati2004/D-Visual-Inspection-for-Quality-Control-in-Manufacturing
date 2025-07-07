@@ -26,6 +26,47 @@ def cached_get_dummy_input(img_height: int, img_width: int, device: torch.device
     # Create a random tensor with batch size 1, 3 channels (RGB), and configured dimensions
     return torch.randn(1, 3, img_height, img_width).to(device)
 
+# ------------------- MANUAL MODEL SUMMARY GENERATION (FALLBACK) -------------------
+def get_manual_model_summary(model: torch.nn.Module) -> str:
+    """
+    Generates a detailed layer-by-layer summary of a PyTorch model by
+    iterating through its named modules and parameters. This serves as a
+    robust fallback when torchinfo fails due to tracing issues.
+
+    Args:
+        model (torch.nn.Module): The PyTorch model to summarize.
+
+    Returns:
+        str: A multi-line string containing the manual summary.
+    """
+    summary_lines = []
+    summary_lines.append(f"Model Type: {model.__class__.__name__}")
+    summary_lines.append(f"Total Parameters: {sum(p.numel() for p in model.parameters()):,}")
+    summary_lines.append(f"Trainable Parameters: {sum(p.numel() for p in model.parameters() if p.requires_grad):,}")
+    summary_lines.append("\n--- Layer-by-Layer Breakdown ---")
+
+    for name, module in model.named_modules():
+        # Skip the top-level module itself to avoid redundancy
+        if name == '':
+            continue
+        
+        summary_lines.append(f"\nModule: {name}")
+        summary_lines.append(f"  Type: {module.__class__.__name__}")
+        
+        # List parameters directly owned by this module
+        module_params = []
+        for param_name, param in module.named_parameters(recurse=False): # recurse=False to only get direct params
+            module_params.append(f"    - {param_name}: Shape={list(param.shape)}, Dtype={param.dtype}, RequiresGrad={param.requires_grad}")
+        
+        if module_params:
+            summary_lines.append("  Parameters:")
+            summary_lines.extend(module_params)
+        else:
+            summary_lines.append("  No direct parameters.")
+            
+    return "\n".join(summary_lines)
+
+
 # ------------------- MODEL MANAGEMENT LOGIC -------------------
 st.title("Model Management")
 st.markdown("""
@@ -69,6 +110,7 @@ if st.button("Apply Model Changes", key="apply_model_changes_button"):
         
         # Update session state with the new model path and encoder
         st.session_state.current_model_path = new_model_path
+        st.session_state.selected_encoder_name = selected_encoder
         
         # Clear cached model to force reload with new path/encoder
         load_segmentation_model.clear()
@@ -97,7 +139,7 @@ st.write(f"**Device:** `{st.session_state.device.type.upper()}`")
 st.markdown("---")
 # Wrap the summary section in an expander
 with st.expander("✨ View Model Architecture Summary"):
-    st.write("Here's a high-level overview of the model's architecture and parameter counts.")
+    st.write("This section provides a detailed overview of the model's layers and parameter counts.")
     try:
         # Load the model (it will be cached, so no redundant loading)
         model = load_segmentation_model(
@@ -111,34 +153,22 @@ with st.expander("✨ View Model Architecture Summary"):
 
         # Attempt to generate model summary using torchinfo
         model_summary_str_io = io.StringIO()
-        summary(model, input_data=dummy_input, verbose=0, depth=1, # Reduced depth for simpler output
-                col_names=["input_size", "output_size", "num_params"], # Simplified columns
+        summary(model, input_data=dummy_input, verbose=0, depth=3,
+                col_names=["input_size", "output_size", "num_params", "kernel_size", "mult_adds"],
                 mode="train",
-                col_width=20, wrap_line=True,
+                col_width=16, wrap_line=True,
                 file=model_summary_str_io
                 )
         
         st.text(model_summary_str_io.getvalue())
-        logger.info("torchinfo model summary generated successfully (simplified).")
+        logger.info("torchinfo model summary generated successfully.")
 
     except Exception as e:
-        logger.error(f"torchinfo summary failed: {e}. Displaying robust basic parameter breakdown as fallback.")
-        
-        # Fallback: display basic parameter counts and a generic description
-        # Ensure model is loaded for parameter count, even if torchinfo failed
-        model = load_segmentation_model(
-            st.session_state.current_model_path,
-            st.session_state.device,
-            st.session_state.selected_encoder_name
-        )
-        
-        total_params = sum(p.numel() for p in model.parameters())
-        trainable_params = sum(p.numel() for p in model.parameters() if p.requires_grad)
-
-        st.write(f"- **Total Parameters:** {total_params:,}")
-        st.write(f"- **Trainable Parameters:** {trainable_params:,}")
-        st.write(f"- **Model Type:** {model.__class__.__name__} (with {st.session_state.selected_encoder_name} encoder)")
-        st.write("This model typically consists of an encoder (feature extractor) and a decoder (segmentation head) for pixel-wise defect identification.")
+        logger.error(f"torchinfo summary failed: {e}. Displaying robust layer breakdown as fallback.")
+        # Fallback: display the manual model summary directly without a warning message
+        manual_summary = get_manual_model_summary(model)
+        st.text(manual_summary)
+        st.info("Note: A detailed layer-by-layer summary with input/output shapes and FLOPs is not available for this model due to compatibility issues with the `torchinfo` library. The above is a robust breakdown of modules and their parameters.")
 
 
 st.markdown("---")

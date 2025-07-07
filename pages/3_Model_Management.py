@@ -16,6 +16,19 @@ from typing import List, Dict, Any, Tuple
 from config import CONFIG, logger
 from model import load_segmentation_model # Only load, not run inference here
 
+# --- Initialize session state variables if they don't exist ---
+if "device" not in st.session_state:
+    st.session_state.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    logger.info(f"Session state: Initialized device to {st.session_state.device}")
+
+if "selected_encoder_name" not in st.session_state:
+    st.session_state.selected_encoder_name = CONFIG.DEFAULT_ENCODER # Assuming CONFIG has a DEFAULT_ENCODER
+    logger.info(f"Session state: Initialized selected_encoder_name to {st.session_state.selected_encoder_name}")
+
+if "current_model_path" not in st.session_state:
+    st.session_state.current_model_path = CONFIG.DEFAULT_MODEL_PATH # Assuming CONFIG has a DEFAULT_MODEL_PATH
+    logger.info(f"Session state: Initialized current_model_path to {st.session_state.current_model_path}")
+
 # ------------------- CACHED UTILITY WRAPPERS -------------------
 @st.cache_data
 def cached_get_dummy_input(img_height: int, img_width: int, device: torch.device):
@@ -51,18 +64,18 @@ def get_manual_model_summary(model: torch.nn.Module) -> str:
             continue
         
         summary_lines.append(f"\nModule: {name}")
-        summary_lines.append(f"  Type: {module.__class__.__name__}")
+        summary_lines.append(f"    Type: {module.__class__.__name__}")
         
         # List parameters directly owned by this module
         module_params = []
         for param_name, param in module.named_parameters(recurse=False): # recurse=False to only get direct params
-            module_params.append(f"    - {param_name}: Shape={list(param.shape)}, Dtype={param.dtype}, RequiresGrad={param.requires_grad}")
+            module_params.append(f"      - {param_name}: Shape={list(param.shape)}, Dtype={param.dtype}, RequiresGrad={param.requires_grad}")
         
         if module_params:
-            summary_lines.append("  Parameters:")
+            summary_lines.append("    Parameters:")
             summary_lines.extend(module_params)
         else:
-            summary_lines.append("  No direct parameters.")
+            summary_lines.append("    No direct parameters.")
             
     return "\n".join(summary_lines)
 

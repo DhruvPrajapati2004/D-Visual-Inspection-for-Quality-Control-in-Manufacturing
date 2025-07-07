@@ -36,7 +36,7 @@ class AppConfig:
     }
 
     # Model Configuration
-    MODEL_PATH = "unet_qc_trained.pth"
+    MODEL_PATH = "model/Unet-resnet34-best.pth"
     DEFAULT_ENCODER = "resnet34"
     SUPPORTED_ENCODERS = [
         "resnet18", "resnet34", "resnet50", "resnet101", "resnet152",

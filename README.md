@@ -1,5 +1,5 @@
 
-# 🔍 AI-Based Surface Defect Detection System
+# 🔍 AI-Based Surface Detection System
 
 A real-time, web-based application for detecting surface defects in industrial metal components using deep learning-based semantic segmentation (U-Net with ResNet34). Built with **Streamlit** and **PyTorch**, the app provides batch and webcam-based defect analysis, heatmap visualization, per-class thresholding, and downloadable reports.
 
